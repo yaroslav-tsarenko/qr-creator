@@ -13,12 +13,12 @@ export const headerContent = {
         href: "/"
     },
     links: [
-        { label: "About", href: "/about-us" },
-        { label: "Services", href: "/services" },
-        { label: "Pricing", href: "/pricing" },
-        { label: "Faq", href: "/faq" },
-        { label: "Get Started", href: "/get-started" },
-        { label: "Contact Us", href: "/contact-us" },
+        { label: "Our Story", href: "/about-us" },         // About
+        { label: "What We Do", href: "/services" },        // Services
+        { label: "Plans & Rates", href: "/pricing" },      // Pricing
+        { label: "Help Center", href: "/faq" },            // Faq
+        { label: "Start Now", href: "/get-started" },      // Get Started
+        { label: "Reach Out", href: "/contact-us" },       // Contact Us
     ]
 };
 
@@ -28,12 +28,12 @@ export const footerContent = {
         {
             title: "Navigation",
             links: [
-                { label: "About", href: "/about-us" },
-                { label: "Services", href: "/services" },
-                { label: "Pricing", href: "/pricing" },
-                { label: "Faq", href: "/faq" },
-                { label: "Get Started", href: "/get-started" },
-                { label: "Contact Us", href: "/contact-us" },
+                { label: "Our Story", href: "/about-us" },         // About
+                { label: "What We Do", href: "/services" },        // Services
+                { label: "Plans & Rates", href: "/pricing" },      // Pricing
+                { label: "Help Center", href: "/faq" },            // Faq
+                { label: "Start Now", href: "/get-started" },      // Get Started
+                { label: "Reach Out", href: "/contact-us" },       // Contact Us
             ]
         },
         {

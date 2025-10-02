@@ -13,7 +13,7 @@ const schema: PageSchema = {
             "multi-device QR codes",
             "easy QR code customization"
         ],
-        canonical: "/qr-generator",
+        canonical: "/dashboard",
         ogImage: {
             title: `QR Code Generator`,
             description: "Create and customize QR codes instantly.",
@@ -28,7 +28,7 @@ const schema: PageSchema = {
             title: "Generate QR Codes Instantly",
             description: "Create, customize, and download QR codes for any purpose — fast, easy, and affordable.",
             buttons: [
-                { text: "Try QR Generator", link: "/qr-generator", color: "primary" },
+                { text: "Try QR Generator", link: "/dashboard", color: "primary" },
                 { text: "Learn More", link: "/faq", color: "secondary" },
             ],
         },
@@ -63,21 +63,21 @@ const schema: PageSchema = {
                     image: "image1",
                     title: "Step 1 — Enter Your Data",
                     description: "Type in a URL, text, contact info, or any data you want to encode.",
-                    buttonLink: "/qr-generator",
+                    buttonLink: "/dashboard",
                     buttonText: "Start Now",
                 },
                 {
                     image: "image2",
                     title: "Step 2 — Customize Your QR Code",
                     description: "Choose colors, add a logo, and set the size to match your brand or style.",
-                    buttonLink: "/qr-generator",
+                    buttonLink: "/dashboard",
                     buttonText: "Customize",
                 },
                 {
                     image: "image3",
                     title: "Step 3 — Download & Share",
                     description: "Download your QR code in high quality and use it anywhere — print, web, or mobile.",
-                    buttonLink: "/qr-generator",
+                    buttonLink: "/dashboard",
                     buttonText: "Download",
                 },
             ],

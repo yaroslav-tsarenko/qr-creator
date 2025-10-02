@@ -3,6 +3,7 @@ import styles from "./Hero.module.scss";
 import clsx from "clsx";
 import ButtonUI from "@/components/ui/button/ButtonUI";
 import { media as mediaMap } from "@/resources/media";
+import Link from "next/link";
 
 export interface HeroButton {
     text: string;
@@ -35,14 +36,15 @@ const Hero: React.FC<HeroProps> = ({ bgImage, title, description, buttons = [] }
                 {description && <p className={styles.description}>{description}</p>}
                 <div className={styles.buttonGroup}>
                     {buttons.slice(0, 2).map((btn, idx) => (
-                        <ButtonUI
-                            key={idx}
-                            color={btn.color || "primary"}
-                            href={btn.link}
-                            sx={{ marginRight: idx === 0 && buttons.length > 1 ? 16 : 0 }}
-                        >
-                            {btn.text}
-                        </ButtonUI>
+                        <Link href={btn.link} key={idx} className={clsx(styles.link, idx === 0 && buttons.length > 1 && styles.primaryLink)}>
+                            <ButtonUI
+                                key={idx}
+                                color={btn.color || "primary"}
+                                sx={{ marginRight: idx === 0 && buttons.length > 1 ? 16 : 0 }}
+                            >
+                                {btn.text}
+                            </ButtonUI>
+                        </Link>
                     ))}
                 </div>
             </div>

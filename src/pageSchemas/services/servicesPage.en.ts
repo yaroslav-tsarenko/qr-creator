@@ -29,7 +29,7 @@ const schema: PageSchema = {
             title: `Welcome to ${COMPANY_NAME}`,
             description: "Your all-in-one solution for generating and customizing QR codes quickly and affordably.",
             buttons: [
-                { text: "Generate QR Code", link: "/qr-generator", color: "primary" },
+                { text: "Generate QR Code", link: "/dashboard", color: "primary" },
                 { text: "See Pricing", link: "/pricing", color: "secondary" }
             ]
         },

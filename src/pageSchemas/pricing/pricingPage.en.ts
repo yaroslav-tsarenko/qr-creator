@@ -34,8 +34,8 @@ const pricingSchema: PageSchema = {
             title: "Simple Pricing for Every Need",
             description: `Choose the perfect plan for personal, professional, or business QR code generation. Pay only for what you use — no recurring fees.`,
             buttons: [
-                { text: "Get Started", link: "/qr-generator", color: "primary" },
-                { text: "Contact Sales", link: "/contact", color: "secondary" },
+                { text: "Get Started", link: "/dashboard", color: "primary" },
+                { text: "Contact Sales", link: "/contact-us", color: "secondary" },
             ],
         },
         {

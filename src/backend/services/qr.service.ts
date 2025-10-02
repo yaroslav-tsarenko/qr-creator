@@ -4,20 +4,18 @@ import { Transaction } from "@/backend/models/transaction.model";
 import { sendEmail } from "@/backend/utils/sendEmail";
 
 export const qrService = {
-    async processQROrder(userId: string, email: string, prompt: string, response: string) {
+    async processQROrder(userId: string, email: string, prompt: string, response: string, tokens: number) {
         const user = await User.findById(userId);
         if (!user) throw new Error("User not found");
-        const cost = 30;
-        if (user.tokens < cost) throw new Error("Insufficient tokens");
+        if (user.tokens < tokens) throw new Error("Insufficient tokens");
 
-        user.tokens -= cost;
+        user.tokens -= tokens;
         await user.save();
 
-        // Create transaction for spending tokens
         await Transaction.create({
             userId,
             email,
-            amount: cost,
+            amount: tokens,
             type: "spend",
             paymentMethod: "tokens",
         });
@@ -32,7 +30,7 @@ export const qrService = {
         await sendEmail(
             email,
             "QR Order Completed",
-            "Your QR code order has been completed and tokens have been spent."
+            `Your QR code order has been completed and ${tokens} tokens have been deducted.`
         );
 
         return order;
