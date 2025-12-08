@@ -6,6 +6,8 @@ import ButtonUI from "@/components/ui/button/ButtonUI";
 import { useAlert } from "@/context/AlertContext";
 import { useUser } from "@/context/UserContext";
 import Input from "@mui/joy/Input";
+import Checkbox from "@mui/joy/Checkbox";
+import Link from "next/link";
 import { useCurrency } from "@/context/CurrencyContext";
 import { MdCheckCircle } from "react-icons/md";
 
@@ -51,9 +53,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
     const { symbol } = currencyConfig[currency];
     const [customAmount, setCustomAmount] = useState(MIN_CUSTOM_AMOUNT);
 
+    // NEW — чекбокс
+    const [acceptedTerms, setAcceptedTerms] = useState(false);
+
     const calcTokens = (amount: number) => Math.floor(amount * 100);
 
     const handleBuy = async () => {
+        if (!acceptedTerms) return;
+
         if (!user) {
             showAlert("Please sign up", "You need to be signed in to buy tokens", "info");
             setTimeout(() => {
@@ -63,7 +70,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
         }
 
         if (price === "dynamic" && customAmount < MIN_CUSTOM_AMOUNT) {
-            showAlert(`Minimum amount is ${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}`, "Please enter a higher amount", "warning");
+            showAlert(
+                `Minimum amount is ${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}`,
+                "Please enter a higher amount",
+                "warning"
+            );
             return;
         }
 
@@ -80,7 +91,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
             if (!res.ok) throw new Error("Failed to buy tokens");
 
             const data = await res.json();
-            showAlert(`Success!`, `You purchased ${amount} tokens.`, "success");
+            showAlert("Success!", `You purchased ${amount} tokens.`, "success");
             console.log("Updated user:", data.user);
         } catch (err) {
             const error = err as Error;
@@ -101,7 +112,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onChange={(e) => {
                             const value = Number(e.target.value);
                             if (value.toString().length > 7) return;
-                            setCustomAmount(Math.max(Math.min(value, MAX_CUSTOM_AMOUNT), MIN_CUSTOM_AMOUNT));
+                            setCustomAmount(
+                                Math.max(
+                                    Math.min(value, MAX_CUSTOM_AMOUNT),
+                                    MIN_CUSTOM_AMOUNT
+                                )
+                            );
                         }}
                         slotProps={{ input: { min: MIN_CUSTOM_AMOUNT, max: MAX_CUSTOM_AMOUNT, step: 0.01 } }}
                         sx={{ mb: 2, width: "100%" }}
@@ -109,6 +125,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         variant="outlined"
                         size="lg"
                     />
+
                     <p className={styles.price}>
                         {symbol}{customAmount.toFixed(2)}{" "}
                         <span className={styles.tokens}>
@@ -118,7 +135,8 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 </>
             ) : (
                 <p className={styles.price}>
-                    {symbol}{Number(price).toFixed(2)} <span className={styles.tokens}>/{tokens} tokens</span>
+                    {symbol}{Number(price).toFixed(2)}
+                    <span className={styles.tokens}>/{tokens} tokens</span>
                 </p>
             )}
 
@@ -133,7 +151,33 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 ))}
             </ul>
 
-            <ButtonUI type="button" color="secondary" hoverColor="secondary" sx={{ width: "100%" }} onClick={handleBuy}>
+            {/* NEW — Terms Checkbox */}
+            <Checkbox
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+                label={
+                    <span>
+                        I agree to{" "}
+                        <Link href="/terms" style={{ color: "#4A8BFF", textDecoration: "underline" }}>
+                            Terms & Conditions
+                        </Link>
+                    </span>
+                }
+                sx={{ mb: 2 }}
+            />
+
+            {/* Button becomes enabled only if agreed */}
+            <ButtonUI
+                type="button"
+                color="secondary"
+                hoverColor="secondary"
+                sx={{
+                    width: "100%",
+                    opacity: acceptedTerms ? 1 : 0.5,
+                    cursor: acceptedTerms ? "pointer" : "not-allowed"
+                }}
+                onClick={acceptedTerms ? handleBuy : undefined}
+            >
                 {user ? buttonText : "Sign Up to Buy"}
             </ButtonUI>
         </div>
