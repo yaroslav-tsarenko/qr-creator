@@ -62,6 +62,62 @@
   }
 }
 
+.companyExtras {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.companyExtrasBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.companyExtrasTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+.companySocials {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: transform 0.15s ease, filter 0.15s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.95);
+    }
+
+    svg {
+      width: 35px;
+      height: 35px;
+    }
+  }
+}
+
+.paymentLogos {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  img {
+    height: auto;
+    display: block;
+  }
+}
+
 .socials {
   display: flex;
   justify-content: center;
@@ -106,5 +162,13 @@
 
   .column {
     align-items: center;
+  }
+
+  .companySocials {
+    justify-content: center;
+  }
+
+  .paymentLogos {
+    justify-content: center;
   }
 }

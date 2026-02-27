@@ -8,7 +8,7 @@ import { footerContent } from "@/resources/content";
 import { useI18n } from "@/context/i18nContext";
 
 const Footer: React.FC = () => {
-    const { logo, columns, contact, socials, legal } = footerContent;
+    const { logo, columns, contact, socials, legal, payments } = footerContent;
     const { lang } = useI18n();
 
     const translations = {
@@ -18,6 +18,8 @@ const Footer: React.FC = () => {
             email: "Email",
             phone: "Phone",
             rights: "All rights reserved.",
+            followUs: "Follow us",
+            payments: "Payments",
         },
         tr: {
             company: "Şirket",
@@ -25,6 +27,8 @@ const Footer: React.FC = () => {
             email: "E-posta",
             phone: "Telefon",
             rights: "Tüm hakları saklıdır.",
+            followUs: "Bizi takip edin",
+            payments: "Ödemeler",
         },
     };
 
@@ -63,34 +67,59 @@ const Footer: React.FC = () => {
                             {contact.email && (
                                 <a href={`mailto:${contact.email}`}>{contact.email}</a>
                             )}
-                            {contact.phone && (
+                            {"phone" in contact && contact.phone && (
                                 <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+                            )}
+
+                            {(!!socials?.length || !!payments?.length) && (
+                                <div className={styles.companyExtras}>
+                                    {!!payments?.length && (
+                                        <div className={styles.companyExtrasBlock}>
+                                            <div className={styles.companyExtrasTitle}>{t.payments}</div>
+                                            <div className={styles.paymentLogos}>
+                                                {payments
+                                                    .filter((p) => !!p.src)
+                                                    .map((p) => (
+                                                        <Image
+                                                            key={p.label}
+                                                            src={p.src!}
+                                                            alt={p.alt}
+                                                            width={54}
+                                                            height={34}
+                                                        />
+                                                    ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!!socials?.length && (
+                                        <div className={styles.companyExtrasBlock}>
+                                            <div className={styles.companyExtrasTitle}>{t.followUs}</div>
+                                            <div className={styles.companySocials}>
+                                                {socials.map((s) => {
+                                                    const Icon = s.icon;
+                                                    return (
+                                                        <a
+                                                            key={s.label}
+                                                            href={s.href}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            aria-label={s.label}
+                                                            style={{ color: s.brandColor }}
+                                                        >
+                                                            <Icon size={25} />
+                                                        </a>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             )}
                         </div>
                     )}
                 </div>
             </div>
-
-            {/* Socials */}
-            {!!socials?.length && (
-                <div className={styles.socials}>
-                    {socials.map((s) => {
-                        const Icon = s.icon;
-                        const isExternal = !s.href?.startsWith("/");
-                        return (
-                            <a
-                                key={s.label}
-                                href={s.href}
-                                target={isExternal ? "_blank" : undefined}
-                                rel={isExternal ? "noopener noreferrer" : undefined}
-                                aria-label={s.label}
-                            >
-                                <Icon size={22} />
-                            </a>
-                        );
-                    })}
-                </div>
-            )}
 
             {/* Bottom rights */}
             <div className={styles.rights}>

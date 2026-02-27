@@ -1,5 +1,6 @@
 import { media } from "@/resources/media";
 import {COMPANY_ADDRESS, COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_NUMBER} from "@/resources/constants";
+import { FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export const baseURL =
     typeof window !== "undefined"
@@ -48,6 +49,7 @@ export const footerContent = {
     ],
     contact: {
         email: COMPANY_EMAIL,
+        phone: undefined,
     },
     legal: {
         companyName: COMPANY_LEGAL_NAME,
@@ -57,4 +59,30 @@ export const footerContent = {
             COMPANY_ADDRESS,
         ],
     },
+    socials: [
+        {
+            label: "Instagram",
+            href: "https://www.instagram.com/avemexqr.uk",
+            icon: FaInstagram,
+            brandColor: "#E1306C",
+        },
+        {
+            label: "LinkedIn",
+            href: "https://www.linkedin.com/company/avemex-uk",
+            icon: FaLinkedin,
+            brandColor: "#0A66C2",
+        },
+    ],
+    payments: [
+        {
+            label: "Visa",
+            src: media.visa?.src,
+            alt: "Visa",
+        },
+        {
+            label: "Mastercard",
+            src: media.mastercard?.src,
+            alt: "Mastercard",
+        },
+    ],
 };
