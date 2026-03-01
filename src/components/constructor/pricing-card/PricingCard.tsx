@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./PricingCard.module.scss";
 import ButtonUI from "@/components/ui/button/ButtonUI";
 import { useAlert } from "@/context/AlertContext";
@@ -30,6 +30,7 @@ const currencyConfig = {
 
 const MIN_PURCHASE_AMOUNT = 10;
 const MAX_CUSTOM_AMOUNT = 9999;
+const TOKENS_PER_1_CURRENCY_UNIT = 100;
 
 const labelText: Record<string, string> = {
     basic: "Basic",
@@ -51,12 +52,23 @@ const PricingCard: React.FC<PricingCardProps> = ({
     const { currency } = useCurrency();
 
     const { symbol } = currencyConfig[currency];
-    const [customAmount, setCustomAmount] = useState(MIN_PURCHASE_AMOUNT);
+
+    // Store input as string to avoid input glitches (e.g. 13 turning into 1012 while typing)
+    const [customAmountInput, setCustomAmountInput] = useState<string>(String(MIN_PURCHASE_AMOUNT));
+
+    // Derived numeric value (clamped)
+    const customAmount = useMemo(() => {
+        const normalized = customAmountInput.replace(/,/g, ".").trim();
+        const n = Number(normalized);
+        if (!Number.isFinite(n)) return MIN_PURCHASE_AMOUNT;
+        return Math.max(Math.min(n, MAX_CUSTOM_AMOUNT), MIN_PURCHASE_AMOUNT);
+    }, [customAmountInput]);
 
     // NEW — чекбокс
     const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-    const calcTokens = (amount: number) => Math.floor(amount * 100);
+    // Use integer tokens (no floating drift).
+    const calcTokens = (amount: number) => Math.floor(amount * TOKENS_PER_1_CURRENCY_UNIT);
 
     const handleBuy = async () => {
         if (!acceptedTerms) return;
@@ -83,7 +95,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
             ? Number(customAmount.toFixed(2))
             : Number(Number(price).toFixed(2));
 
-        const tokensToBuy = price === "dynamic" ? calcTokens(customAmount) : tokens;
+        // For dynamic pack tokens come from entered amount.
+        const tokensToBuy = price === "dynamic"
+            ? calcTokens(payAmount)
+            : tokens;
 
         if (!Number.isFinite(payAmount) || payAmount < MIN_PURCHASE_AMOUNT) {
             showAlert(
@@ -140,19 +155,26 @@ const PricingCard: React.FC<PricingCardProps> = ({
             {price === "dynamic" ? (
                 <>
                     <Input
-                        type="number"
-                        value={customAmount}
+                        type="text"
+                        inputMode="decimal"
+                        value={customAmountInput}
                         onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value.toString().length > 7) return;
-                            setCustomAmount(
-                                Math.max(
-                                    Math.min(value, MAX_CUSTOM_AMOUNT),
-                                    MIN_PURCHASE_AMOUNT
-                                )
-                            );
+                            const next = e.target.value;
+                            // allow digits, dot and comma, and empty (while editing)
+                            if (!/^[0-9]*[.,]?[0-9]*$/.test(next)) return;
+                            if (next.length > 7) return;
+                            setCustomAmountInput(next);
                         }}
-                        slotProps={{ input: { min: MIN_PURCHASE_AMOUNT, max: MAX_CUSTOM_AMOUNT, step: 0.01 } }}
+                        onBlur={() => {
+                            // Snap to a sane formatted number on blur
+                            setCustomAmountInput(customAmount.toFixed(2));
+                        }}
+                        slotProps={{
+                            input: {
+                                // for mobile keyboards
+                                inputMode: "decimal",
+                            },
+                        }}
                         sx={{ mb: 2, width: "100%" }}
                         placeholder={`Enter amount (${symbol}${MIN_PURCHASE_AMOUNT.toFixed(2)}+)`}
                         variant="outlined"
@@ -160,9 +182,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     />
 
                     <p className={styles.price}>
-                        {symbol}{customAmount.toFixed(2)}{" "}
+                        {symbol}{Number(customAmount.toFixed(2)).toFixed(2)}{" "}
                         <span className={styles.tokens}>
-                            ≈ {calcTokens(customAmount)} tokens
+                            ≈ {calcTokens(Number(customAmount.toFixed(2)))} tokens
                         </span>
                     </p>
                 </>
