@@ -1,0 +1,120 @@
+.card {
+  position: relative;
+  border-radius: 18px;
+  padding: 2.2rem 1.7rem 2rem 1.7rem;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: linear-gradient(135deg, #242424 0%, #2e2e2e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  &:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+
+  .cornerLabel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #4500e6, #d900aa);
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0 14px 0 14px;
+    z-index: 2;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  .title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-align: center;
+    background: linear-gradient(90deg, #4500e6, #d900aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .price {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    text-align: center;
+    color: #fff;
+
+    .tokens {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #ccc;
+      margin-left: 0.5rem;
+    }
+  }
+
+  .description {
+    font-size: 1rem;
+    margin-bottom: 1.4rem;
+    color: #ddd;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .features {
+    list-style: none;
+    padding: 0;
+    margin: 1.4rem 0 1.8rem;
+  }
+
+  .featureItem {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1rem;
+    color: #eee;
+    margin-bottom: 0.6rem;
+  }
+
+  .featureIcon {
+    color: #4500e6;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+}
+
+/* Variants */
+.basic {
+  border: 2px solid #4500e6;
+  background: linear-gradient(135deg, #2b2b2b 0%, #242424 100%);
+}
+
+.highlight {
+  border: 2px solid #d900aa;
+  background: linear-gradient(135deg, #4500e6 0%, #d900aa 100%);
+  box-shadow: 0 10px 30px rgba(217, 0, 170, 0.35);
+}
+
+.premium {
+  border: 2px solid #fff;
+  background: linear-gradient(135deg, #2b2b2b 0%, #4500e6 100%);
+  box-shadow: 0 10px 28px rgba(69, 0, 230, 0.35);
+}
+
+@media screen and (max-width: 1028px) {
+  .card {
+    padding: 1.2rem 1rem;
+    border-radius: 12px;
+  }
+  .title {
+    font-size: 1.4rem;
+  }
+  .price {
+    font-size: 1.6rem;
+  }
+}

@@ -6,8 +6,6 @@ import ButtonUI from "@/components/ui/button/ButtonUI";
 import { useAlert } from "@/context/AlertContext";
 import { useUser } from "@/context/UserContext";
 import Input from "@mui/joy/Input";
-import Checkbox from "@mui/joy/Checkbox";
-import Link from "next/link";
 import { useCurrency } from "@/context/CurrencyContext";
 import { MdCheckCircle } from "react-icons/md";
 
@@ -48,47 +46,63 @@ const PricingCard: React.FC<PricingCardProps> = ({
                                                  }) => {
     const { showAlert } = useAlert();
     const user = useUser();
-    const { currency } = useCurrency();
 
+    // currency + real exchange rates
+    const { currency, rates, loading } = useCurrency();
     const { symbol } = currencyConfig[currency];
+
     const [customAmount, setCustomAmount] = useState(MIN_CUSTOM_AMOUNT);
 
-    // NEW — чекбокс
-    const [acceptedTerms, setAcceptedTerms] = useState(false);
 
+    const convertPrice = (base: number) => {
+        if (loading) return base;
+        return base * rates[currency];
+    };
+    const convertedPrice = convertPrice(Number(price));
     const calcTokens = (amount: number) => Math.floor(amount * 100);
 
     const handleBuy = async () => {
-        if (!acceptedTerms) return;
-
         if (!user) {
-            showAlert("Please sign up", "You need to be signed in to buy tokens", "info");
-            setTimeout(() => {
-                window.location.href = "/sign-up";
-            }, 2000);
+            showAlert("Please sign up", "You need to be signed in", "info");
             return;
         }
 
-        // Amount in selected UI currency (matches what /api/transfermit/initiate expects)
-        const payAmount = price === "dynamic" ? Number(customAmount.toFixed(2)) : Number(Number(price).toFixed(2));
-        const tokensToBuy = price === "dynamic" ? calcTokens(customAmount) : tokens;
+        // 🔑 BASE: ціна завжди рахується від токенів
+        const baseAmountGBP =
+            price === "dynamic"
+                ? customAmount
+                : tokens / 100; // 100 tokens = £1
+
+        // 🔑 PAY AMOUNT = base * rate валюти
+        const payAmount = Number(
+            (baseAmountGBP * rates[currency]).toFixed(2)
+        );
+
+        const tokensToBuy =
+            price === "dynamic"
+                ? Math.floor(customAmount * 100)
+                : tokens;
 
         if (!Number.isFinite(payAmount) || payAmount <= 0) {
             showAlert("Error", "Invalid payment amount", "error");
             return;
         }
 
-        try {
-            const payload = {
-                amount: payAmount,
-                currency,
-                tokens: tokensToBuy,
-                user: {
-                    id: user._id,
-                    email: user.email,
-                },
-            };
+        const payload = {
+            amount: payAmount,      // ✅ СУМА В ОБРАНІЙ ВАЛЮТІ
+            currency,               // ✅ GBP | USD | EUR
+            tokens: tokensToBuy,
+            user: {
+                id: user._id,
+                email: user.email,
+                firstName: user.firstName || "Customer",
+                lastName: "User",
+            },
+        };
 
+        console.log("[PricingCard] PAYLOAD:", payload);
+
+        try {
             const res = await fetch("/api/transfermit/initiate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -102,14 +116,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 throw new Error(data?.error || "Payment init failed");
             }
 
-            if (!data?.redirectUrl) {
-                throw new Error("Missing redirectUrl");
-            }
-
             window.location.href = data.redirectUrl;
         } catch (err) {
-            const error = err as Error;
-            showAlert("Payment error", error.message || "Something went wrong", "error");
+            showAlert("Payment error", (err as Error).message, "error");
         }
     };
 
@@ -118,7 +127,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
             <div className={styles.cornerLabel}>{labelText[variant]}</div>
             <h3 className={styles.title}>{title}</h3>
 
-            {price === "dynamic" ? (
+            {/* -------- FIXED PRICE WITH CONVERSION ----- */}
+            {price !== "dynamic" ? (
+                <p className={styles.price}>
+                    {symbol}
+                    {convertedPrice.toFixed(2)}{" "}
+                    <span className={styles.tokens}>/ {tokens} tokens</span>
+                </p>
+            ) : (
+
                 <>
                     <Input
                         type="number"
@@ -126,32 +143,34 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         onChange={(e) => {
                             const value = Number(e.target.value);
                             if (value.toString().length > 7) return;
+
                             setCustomAmount(
-                                Math.max(
-                                    Math.min(value, MAX_CUSTOM_AMOUNT),
-                                    MIN_CUSTOM_AMOUNT
-                                )
+                                Math.max(Math.min(value, MAX_CUSTOM_AMOUNT), MIN_CUSTOM_AMOUNT)
                             );
                         }}
-                        slotProps={{ input: { min: MIN_CUSTOM_AMOUNT, max: MAX_CUSTOM_AMOUNT, step: 0.01 } }}
+                        slotProps={{
+                            input: {
+                                min: MIN_CUSTOM_AMOUNT,
+                                max: MAX_CUSTOM_AMOUNT,
+                                step: 0.01,
+                            },
+                        }}
                         sx={{ mb: 2, width: "100%" }}
-                        placeholder={`Enter amount (${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}+)`}
+                        placeholder={`Enter amount (${symbol}${convertPrice(
+                            MIN_CUSTOM_AMOUNT
+                        ).toFixed(2)}+)`}
                         variant="outlined"
                         size="lg"
                     />
 
                     <p className={styles.price}>
-                        {symbol}{customAmount.toFixed(2)}{" "}
+                        {symbol}
+                        {convertPrice(customAmount).toFixed(2)}{" "}
                         <span className={styles.tokens}>
                             ≈ {calcTokens(customAmount)} tokens
                         </span>
                     </p>
                 </>
-            ) : (
-                <p className={styles.price}>
-                    {symbol}{Number(price).toFixed(2)}
-                    <span className={styles.tokens}>/{tokens} tokens</span>
-                </p>
             )}
 
             <p className={styles.description}>{description}</p>
@@ -165,32 +184,12 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 ))}
             </ul>
 
-            {/* NEW — Terms Checkbox */}
-            <Checkbox
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                label={
-                    <span>
-                        I agree to{" "}
-                        <Link href="/terms" style={{ color: "#4A8BFF", textDecoration: "underline" }}>
-                            Terms & Conditions
-                        </Link>
-                    </span>
-                }
-                sx={{ mb: 2 }}
-            />
-
-            {/* Button becomes enabled only if agreed */}
             <ButtonUI
                 type="button"
                 color="secondary"
                 hoverColor="secondary"
-                sx={{
-                    width: "100%",
-                    opacity: acceptedTerms ? 1 : 0.5,
-                    cursor: acceptedTerms ? "pointer" : "not-allowed",
-                }}
-                onClick={acceptedTerms ? handleBuy : undefined}
+                sx={{ width: "100%" }}
+                onClick={handleBuy}
             >
                 {user ? buttonText : "Sign Up to Buy"}
             </ButtonUI>
