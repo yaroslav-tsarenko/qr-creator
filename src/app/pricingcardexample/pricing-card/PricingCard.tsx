@@ -26,7 +26,7 @@ const currencyConfig = {
     EUR: { symbol: "€" },
 } as const;
 
-const MIN_CUSTOM_AMOUNT = 0.01;
+const MIN_CUSTOM_AMOUNT = 10;
 const MAX_CUSTOM_AMOUNT = 9999;
 
 const labelText: Record<string, string> = {
@@ -67,6 +67,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return;
         }
 
+        if (price === "dynamic" && customAmount < MIN_CUSTOM_AMOUNT) {
+            showAlert(
+                `Minimum amount is ${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}`,
+                "Please enter a higher amount",
+                "warning"
+            );
+            return;
+        }
+
         // 🔑 BASE: ціна завжди рахується від токенів
         const baseAmountGBP =
             price === "dynamic"
@@ -78,15 +87,19 @@ const PricingCard: React.FC<PricingCardProps> = ({
             (baseAmountGBP * rates[currency]).toFixed(2)
         );
 
+        if (!Number.isFinite(payAmount) || payAmount < MIN_CUSTOM_AMOUNT) {
+            showAlert(
+                "Error",
+                `Minimum amount is ${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}`,
+                "error"
+            );
+            return;
+        }
+
         const tokensToBuy =
             price === "dynamic"
                 ? Math.floor(customAmount * 100)
                 : tokens;
-
-        if (!Number.isFinite(payAmount) || payAmount <= 0) {
-            showAlert("Error", "Invalid payment amount", "error");
-            return;
-        }
 
         const payload = {
             amount: payAmount,      // ✅ СУМА В ОБРАНІЙ ВАЛЮТІ
@@ -95,8 +108,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
             user: {
                 id: user._id,
                 email: user.email,
-                firstName: user.firstName || "Customer",
-                lastName: "User",
+                // Avoid fields not present in IUser
             },
         };
 
@@ -113,7 +125,13 @@ const PricingCard: React.FC<PricingCardProps> = ({
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data?.error || "Payment init failed");
+                showAlert("Payment error", data?.error || "Payment init failed", "error");
+                return;
+            }
+
+            if (!data?.redirectUrl) {
+                showAlert("Payment error", "Missing redirectUrl", "error");
+                return;
             }
 
             window.location.href = data.redirectUrl;
@@ -156,9 +174,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                             },
                         }}
                         sx={{ mb: 2, width: "100%" }}
-                        placeholder={`Enter amount (${symbol}${convertPrice(
-                            MIN_CUSTOM_AMOUNT
-                        ).toFixed(2)}+)`}
+                        placeholder={`Enter amount (${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}+)`}
                         variant="outlined"
                         size="lg"
                     />

@@ -28,7 +28,7 @@ const currencyConfig = {
     EUR: { symbol: "€" },
 } as const;
 
-const MIN_CUSTOM_AMOUNT = 0.01;
+const MIN_PURCHASE_AMOUNT = 10;
 const MAX_CUSTOM_AMOUNT = 9999;
 
 const labelText: Record<string, string> = {
@@ -51,7 +51,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
     const { currency } = useCurrency();
 
     const { symbol } = currencyConfig[currency];
-    const [customAmount, setCustomAmount] = useState(MIN_CUSTOM_AMOUNT);
+    const [customAmount, setCustomAmount] = useState(MIN_PURCHASE_AMOUNT);
 
     // NEW — чекбокс
     const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -69,12 +69,28 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return;
         }
 
+        if (price === "dynamic" && customAmount < MIN_PURCHASE_AMOUNT) {
+            showAlert(
+                `Minimum amount is ${symbol}${MIN_PURCHASE_AMOUNT.toFixed(2)}`,
+                "Please enter a higher amount",
+                "warning"
+            );
+            return;
+        }
+
         // Amount in selected UI currency (matches what /api/transfermit/initiate expects)
-        const payAmount = price === "dynamic" ? Number(customAmount.toFixed(2)) : Number(Number(price).toFixed(2));
+        const payAmount = price === "dynamic"
+            ? Number(customAmount.toFixed(2))
+            : Number(Number(price).toFixed(2));
+
         const tokensToBuy = price === "dynamic" ? calcTokens(customAmount) : tokens;
 
-        if (!Number.isFinite(payAmount) || payAmount <= 0) {
-            showAlert("Error", "Invalid payment amount", "error");
+        if (!Number.isFinite(payAmount) || payAmount < MIN_PURCHASE_AMOUNT) {
+            showAlert(
+                "Error",
+                `Minimum amount is ${symbol}${MIN_PURCHASE_AMOUNT.toFixed(2)}`,
+                "error"
+            );
             return;
         }
 
@@ -99,11 +115,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
             const data = await res.json();
 
             if (!res.ok) {
-                throw new Error(data?.error || "Payment init failed");
+                const msg = data?.error || "Payment init failed";
+                showAlert("Payment error", msg, "error");
+                return;
             }
 
             if (!data?.redirectUrl) {
-                throw new Error("Missing redirectUrl");
+                showAlert("Payment error", "Missing redirectUrl", "error");
+                return;
             }
 
             window.location.href = data.redirectUrl;
@@ -129,13 +148,13 @@ const PricingCard: React.FC<PricingCardProps> = ({
                             setCustomAmount(
                                 Math.max(
                                     Math.min(value, MAX_CUSTOM_AMOUNT),
-                                    MIN_CUSTOM_AMOUNT
+                                    MIN_PURCHASE_AMOUNT
                                 )
                             );
                         }}
-                        slotProps={{ input: { min: MIN_CUSTOM_AMOUNT, max: MAX_CUSTOM_AMOUNT, step: 0.01 } }}
+                        slotProps={{ input: { min: MIN_PURCHASE_AMOUNT, max: MAX_CUSTOM_AMOUNT, step: 0.01 } }}
                         sx={{ mb: 2, width: "100%" }}
-                        placeholder={`Enter amount (${symbol}${MIN_CUSTOM_AMOUNT.toFixed(2)}+)`}
+                        placeholder={`Enter amount (${symbol}${MIN_PURCHASE_AMOUNT.toFixed(2)}+)`}
                         variant="outlined"
                         size="lg"
                     />

@@ -2,9 +2,6 @@ import { PageSchema } from "@/components/constructor/page-render/types";
 import {
     COMPANY_NAME,
     COMPANY_EMAIL,
-    COMPANY_LEGAL_NAME,
-    COMPANY_ADDRESS,
-    COMPANY_NUMBER,
 } from "@/resources/constants";
 
 const pricingSchema: PageSchema = {
@@ -70,7 +67,8 @@ const pricingSchema: PageSchema = {
                     type: "pricing",
                     variant: "basic",
                     title: "Starter Pack",
-                    price: "5",
+                    price: "10",
+                    tokens: 1000,
                     description: "For individuals who need a few QR codes.",
                     features: [
                         "Up to 10 QR codes",
@@ -85,7 +83,8 @@ const pricingSchema: PageSchema = {
                     type: "pricing",
                     variant: "highlight",
                     title: "Pro Pack",
-                    price: "15",
+                    price: "20",
+                    tokens: 2000,
                     description: "For professionals and small teams.",
                     features: [
                         "Up to 50 QR codes",
@@ -100,7 +99,8 @@ const pricingSchema: PageSchema = {
                     type: "pricing",
                     variant: "premium",
                     title: "Business Pack",
-                    price: "30",
+                    price: "40",
+                    tokens: 4000,
                     description: "For businesses with ongoing QR needs.",
                     features: [
                         "Unlimited QR codes",
@@ -116,6 +116,7 @@ const pricingSchema: PageSchema = {
                     variant: "basic",
                     title: "Custom Pack",
                     price: "dynamic",
+                    tokens: 0,
                     description: "Define your own package and get instant pricing.",
                     features: [
                         "Flexible number of QR codes",
