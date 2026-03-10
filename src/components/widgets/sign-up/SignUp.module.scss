@@ -1,0 +1,128 @@
+.page {
+  min-height: 100vh;
+  padding: 48px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top left, rgba(230, 198, 151, 0.35), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(30, 136, 229, 0.12), transparent 32%),
+    linear-gradient(135deg, #f8f5ef 0%, #fefcf9 48%, #eef4fb 100%);
+}
+
+.card {
+  width: min(100%, 1080px);
+  display: grid;
+  grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 28px 80px rgba(18, 38, 63, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.intro {
+  padding: 40px 32px;
+  color: #f8fafc;
+  background:
+    linear-gradient(180deg, rgba(5, 17, 40, 0.1), rgba(5, 17, 40, 0.3)),
+    linear-gradient(150deg, #183b56 0%, #0f766e 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: space-between;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.introTitle {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  line-height: 1;
+}
+
+.introText {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.8);
+  line-height: 1.6;
+}
+
+.checklist {
+  display: grid;
+  gap: 12px;
+}
+
+.checkItem {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(248, 250, 252, 0.92);
+}
+
+.formPanel {
+  padding: 40px 32px;
+}
+
+.heading {
+  margin: 0 0 8px;
+  font-size: 2rem;
+  color: #10233c;
+}
+
+.description {
+  margin: 0 0 28px;
+  color: #5c6b7b;
+  line-height: 1.6;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 16px;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.submit {
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .card {
+    grid-template-columns: 1fr;
+  }
+
+  .intro,
+  .formPanel {
+    padding: 28px 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 12px;
+  }
+
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  .fullWidth {
+    grid-column: auto;
+  }
+}
