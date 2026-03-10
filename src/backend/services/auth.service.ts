@@ -7,6 +7,22 @@ import { ENV } from "../config/env";
 import { Types } from "mongoose";
 import {sendEmail} from "@/backend/utils/sendEmail";
 import {COMPANY_NAME} from "@/resources/constants";
+import { isAllowedCountry } from "@/resources/allowedCountries";
+
+type RegisterData = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phone: string;
+    dateOfBirth: string;
+    address: {
+        street: string;
+        city: string;
+        country: string;
+        postalCode: string;
+    };
+};
 
 function parseDurationToSec(input: string): number {
     const m = input.match(/^(\d+)([smhd])?$/i);
@@ -19,13 +35,39 @@ function parseDurationToSec(input: string): number {
 
 const REFRESH_TTL_SEC = parseDurationToSec(ENV.REFRESH_TOKEN_EXPIRES);
 
+function ensureRegisterData(data: RegisterData) {
+    const address = data.address ?? {
+        street: "",
+        city: "",
+        country: "",
+        postalCode: "",
+    };
+
+    if (!data.firstName.trim() || !data.lastName.trim()) throw new Error("First name and last name are required");
+    if (!data.email.trim()) throw new Error("Email is required");
+    if (!data.password || data.password.length < 8) throw new Error("Password must be at least 8 characters");
+    if (!data.phone.trim()) throw new Error("Phone is required");
+    if (!data.dateOfBirth || Number.isNaN(new Date(data.dateOfBirth).getTime())) throw new Error("Date of birth is required");
+    if (new Date(data.dateOfBirth).getTime() > Date.now()) throw new Error("Date of birth cannot be in the future");
+    if (!address.street.trim() || !address.city.trim() || !address.postalCode.trim()) {
+        throw new Error("Full address is required");
+    }
+    if (!isAllowedCountry(address.country)) throw new Error("Selected country is not allowed");
+}
+
 export const authService = {
-    async register(data: { name: string; email: string; password: string }) {
+    async register(data: RegisterData) {
+        ensureRegisterData(data);
         const existing = await User.findOne({ email: data.email.toLowerCase() });
         if (existing) throw new Error("Email already registered");
 
         const hashed = await bcrypt.hash(data.password, 12);
-        const user = await User.create({ ...data, email: data.email.toLowerCase(), password: hashed });
+        const user = await User.create({
+            ...data,
+            name: `${data.firstName} ${data.lastName}`.trim(),
+            email: data.email.toLowerCase(),
+            password: hashed
+        });
         const result = await this.issueTokensAndSession(user._id, user.email, user.role, undefined, undefined);
         await sendEmail(
             user.email,

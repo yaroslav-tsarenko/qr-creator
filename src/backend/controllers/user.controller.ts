@@ -8,6 +8,12 @@ export const userController = {
     async buyTokens(userId: string, amount: number): Promise<UserType> {
         await connectDB();
         const user = await userService.addTokens(userId, amount);
+        const address = {
+            street: user.address?.street ?? "",
+            city: user.address?.city ?? "",
+            country: user.address?.country ?? "",
+            postalCode: user.address?.postalCode ?? "",
+        };
         await Transaction.create({
             userId: user._id,
             email: user.email,
@@ -18,7 +24,12 @@ export const userController = {
         return {
             _id: user._id.toString(),
             name: user.name,
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: user.email,
+            phone: user.phone,
+            dateOfBirth: user.dateOfBirth,
+            address,
             role: user.role,
             tokens: user.tokens,
             createdAt: user.createdAt,

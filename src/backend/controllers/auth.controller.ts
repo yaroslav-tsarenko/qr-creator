@@ -1,12 +1,23 @@
 import { connectDB } from "../config/db";
 import { authService } from "../services/auth.service";
-import { User } from "../models/user.model";
-import { AuthResponse, AuthError, LogoutResponse } from "@/backend/types/auth.types";
-import { UserType } from "@/backend/types/user.types";
-import { signAccessToken } from "../utils/jwt";
+import { LogoutResponse } from "@/backend/types/auth.types";
+import { IUserSchema, UserType } from "@/backend/types/user.types";
 
 export const authController = {
-    async register(body: { name: string; email: string; password: string }) {
+    async register(body: {
+        firstName: string;
+        lastName: string;
+        email: string;
+        password: string;
+        phone: string;
+        dateOfBirth: string;
+        address: {
+            street: string;
+            city: string;
+            country: string;
+            postalCode: string;
+        };
+    }) {
         await connectDB();
         const { user, accessToken, refreshToken } = await authService.register(body);
         return { user: toUser(user), tokens: { accessToken, refreshToken } };
@@ -43,11 +54,23 @@ export const authController = {
     },
 };
 
-function toUser(u: any): UserType {
+function toUser(u: IUserSchema): UserType {
+    const address = {
+        street: u.address?.street ?? "",
+        city: u.address?.city ?? "",
+        country: u.address?.country ?? "",
+        postalCode: u.address?.postalCode ?? "",
+    };
+
     return {
         _id: u._id.toString(),
         name: u.name,
+        firstName: u.firstName,
+        lastName: u.lastName,
         email: u.email,
+        phone: u.phone,
+        dateOfBirth: u.dateOfBirth,
+        address,
         role: u.role,
         tokens: u.tokens,
         createdAt: u.createdAt,
