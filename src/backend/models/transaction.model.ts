@@ -5,6 +5,10 @@ export interface TransactionDocument extends Document {
     email: string;
     amount: number;
     type: "add" | "spend";
+    currency?: string;
+    paymentAmount?: number;
+    referenceId?: string;
+    packageName?: string;
     createdAt: Date;
 }
 
@@ -13,6 +17,10 @@ const transactionSchema = new Schema<TransactionDocument>({
     email: { type: String, required: true },
     amount: { type: Number, required: true },
     type: { type: String, enum: ["add", "spend"], required: true },
+    currency: { type: String, trim: true },
+    paymentAmount: { type: Number },
+    referenceId: { type: String, trim: true, unique: true, sparse: true },
+    packageName: { type: String, trim: true },
     createdAt: { type: Date, default: Date.now },
 });
 

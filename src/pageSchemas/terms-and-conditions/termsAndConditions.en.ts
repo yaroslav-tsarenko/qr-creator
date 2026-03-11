@@ -5,6 +5,7 @@ import {
     COMPANY_NUMBER,
     COMPANY_ADDRESS,
     COMPANY_EMAIL,
+    COMPANY_PHONE,
 } from "@/resources/constants";
 
 const termsSchema: PageSchema = {
@@ -22,7 +23,7 @@ const termsSchema: PageSchema = {
             "payment",
             "currency"
         ],
-        canonical: "/terms",
+        canonical: "/terms-and-conditions",
         ogImage: {
             title: `${COMPANY_NAME} – Terms`,
             description: "Transparent conditions. QR codes made simple.",
@@ -77,7 +78,8 @@ const termsSchema: PageSchema = {
             bullets: [
                 "All orders are subject to acceptance by the Company. We may refuse or cancel any order for any reason, including suspected fraud, technical errors, or errors in price or product description.",
                 "Accepted payment methods are displayed at checkout. You warrant that you are authorised to use any payment method you provide.",
-                "At checkout you will be shown: (a) the price of the selected features or products; (b) applicable taxes, fees and charges. You must confirm these before completing the transaction.",
+                "At checkout you will be shown: (a) the price of the selected features or products; (b) the settlement currency selected on the site or checkout page; and (c) applicable taxes, fees and charges. You must confirm these before completing the transaction.",
+                "Where multiple site currencies are available, your order is charged and settled in the currency explicitly selected and shown at checkout.",
                 "Products are delivered digitally and considered provided once download or access is granted. We do not guarantee continuous availability of the Service."
             ]
         },
@@ -178,7 +180,8 @@ const termsSchema: PageSchema = {
                 `Company: ${COMPANY_LEGAL_NAME}`,
                 `Registered office: ${COMPANY_ADDRESS}`,
                 `Company no.: ${COMPANY_NUMBER}`,
-                `Email: ${COMPANY_EMAIL}`
+                `Email: ${COMPANY_EMAIL}`,
+                `Phone: ${COMPANY_PHONE}`
             ]
         }
     ]

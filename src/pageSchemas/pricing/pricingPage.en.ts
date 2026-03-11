@@ -3,6 +3,7 @@ import {
     COMPANY_NAME,
     COMPANY_EMAIL,
 } from "@/resources/constants";
+import { pricingCardsEn } from "@/resources/pricingPlans";
 
 const pricingSchema: PageSchema = {
     meta: {
@@ -62,72 +63,7 @@ const pricingSchema: PageSchema = {
             type: "grid",
             columns: 4,
             gap: "2rem",
-            cards: [
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Starter Pack",
-                    price: "10",
-                    tokens: 1000,
-                    description: "For individuals who need a few QR codes.",
-                    features: [
-                        "Up to 10 QR codes",
-                        "Basic customization",
-                        "Download in PNG/JPG",
-                        "No expiration"
-                    ],
-                    buttonText: "Buy Now",
-                    buttonLink: "/checkout?plan=starter",
-                },
-                {
-                    type: "pricing",
-                    variant: "highlight",
-                    title: "Pro Pack",
-                    price: "20",
-                    tokens: 2000,
-                    description: "For professionals and small teams.",
-                    features: [
-                        "Up to 50 QR codes",
-                        "Advanced customization (colors, logos)",
-                        "High-resolution exports",
-                        "Best value for growing teams"
-                    ],
-                    buttonText: "Get Pro",
-                    buttonLink: "/checkout?plan=pro",
-                },
-                {
-                    type: "pricing",
-                    variant: "premium",
-                    title: "Business Pack",
-                    price: "40",
-                    tokens: 4000,
-                    description: "For businesses with ongoing QR needs.",
-                    features: [
-                        "Unlimited QR codes",
-                        "Full customization",
-                        "Priority support",
-                        "Bulk download/export"
-                    ],
-                    buttonText: "Go Business",
-                    buttonLink: "/checkout?plan=business",
-                },
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Custom Pack",
-                    price: "dynamic",
-                    tokens: 0,
-                    description: "Define your own package and get instant pricing.",
-                    features: [
-                        "Flexible number of QR codes",
-                        "Custom features",
-                        "No expiration",
-                        "Perfect for enterprises"
-                    ],
-                    buttonText: "Contact Us",
-                    buttonLink: "/contact",
-                },
-            ],
+            cards: pricingCardsEn,
         },
         {
             type: "section",

@@ -114,6 +114,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 amount: payAmount,
                 currency,
                 tokens: tokensToBuy,
+                packageName: price === "dynamic" ? "Custom Pack" : title,
                 user: {
                     id: user._id,
                     email: user.email,
@@ -213,7 +214,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 label={
                     <span>
                         I agree to{" "}
-                        <Link href="/terms" style={{ color: "#4A8BFF", textDecoration: "underline" }}>
+                        <Link href="/terms-and-conditions" style={{ color: "#4A8BFF", textDecoration: "underline" }}>
                             Terms & Conditions
                         </Link>
                     </span>

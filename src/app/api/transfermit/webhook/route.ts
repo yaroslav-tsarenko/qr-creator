@@ -2,6 +2,8 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { userController } from "@/backend/controllers/user.controller";
+import { connectDB } from "@/backend/config/db";
+import { Transaction } from "@/backend/models/transaction.model";
 
 export const runtime = "nodejs";
 
@@ -52,6 +54,9 @@ export async function POST(req: Request) {
     const userId = additional.user_id ?? additional.userId;
     const tokens = Number(additional.tokens);
     const referenceId = payment.referenceId ?? additional.reference_id;
+    const packageName = additional.package_name ?? additional.packageName ?? "Custom Pack";
+    const paymentAmount = Number(payment.amount);
+    const currency = typeof payment.currency === "string" ? payment.currency.toUpperCase() : undefined;
 
     console.log("[TM WEBHOOK]", { referenceId, state, userId, tokens });
 
@@ -61,7 +66,21 @@ export async function POST(req: Request) {
             return new NextResponse("invalid_additional_parameters", { status: 400 });
         }
 
-        await userController.buyTokens(String(userId), tokens);
+        await connectDB();
+
+        if (referenceId) {
+            const existing = await Transaction.findOne({ referenceId: String(referenceId) });
+            if (existing) {
+                return new NextResponse("ok", { status: 200 });
+            }
+        }
+
+        await userController.buyTokens(String(userId), tokens, {
+            referenceId: referenceId ? String(referenceId) : undefined,
+            packageName: String(packageName),
+            paymentAmount: Number.isFinite(paymentAmount) ? paymentAmount : undefined,
+            currency,
+        });
     }
 
     // For PENDING/DECLINED we just acknowledge.

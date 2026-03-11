@@ -2,9 +2,6 @@ import { PageSchema } from "@/components/constructor/page-render/types";
 import {
     COMPANY_NAME,
     COMPANY_EMAIL,
-    COMPANY_LEGAL_NAME,
-    COMPANY_ADDRESS,
-    COMPANY_NUMBER,
 } from "@/resources/constants";
 
 const faqSchema: PageSchema = {
@@ -72,7 +69,7 @@ const faqSchema: PageSchema = {
                     answer: `${COMPANY_NAME} follows industry-standard security practices to ensure that your generated QR codes and data are safe.`
                 },
                 {
-                    question: "Can businesses use ${COMPANY_NAME}?",
+                    question: `Can businesses use ${COMPANY_NAME}?`,
                     answer: "Absolutely. We support bulk QR code generation, custom branding, analytics, and enterprise integrations."
                 },
                 {

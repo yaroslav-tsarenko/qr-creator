@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FieldProps } from "formik";
 import { TextField, Card, CardContent, Typography, Box } from "@mui/material";
 import Confetti from "react-confetti";
 import styles from "./ContactUsForm.module.scss";
@@ -8,7 +8,7 @@ import { validationSchema, initialValues, sendContactRequest } from "./schema";
 import { useAlert } from "@/context/AlertContext";
 import { useI18n } from "@/context/i18nContext";
 import ButtonUI from "@/components/ui/button/ButtonUI";
-import { COMPANY_ADDRESS } from "@/resources/constants";
+import { COMPANY_ADDRESS, COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_PHONE } from "@/resources/constants";
 
 const translations = {
     en: {
@@ -25,7 +25,8 @@ const translations = {
         successAlertMsg: "Your request has been sent!",
         errorAlertTitle: "Error",
         errorAlertMsg: "Failed to send. Please try again.",
-        mapTitle: "Find Us Here"
+        mapTitle: "Find Us Here",
+        directContact: "Direct contact",
     },
     tr: {
         formTitle: "Bize Ulaşın",
@@ -41,7 +42,8 @@ const translations = {
         successAlertMsg: "Talebiniz gönderildi!",
         errorAlertTitle: "Hata",
         errorAlertMsg: "Gönderilemedi. Lütfen tekrar deneyin.",
-        mapTitle: "Bizi Burada Bulun"
+        mapTitle: "Bizi Burada Bulun",
+        directContact: "Dogrudan iletisim",
     },
 };
 
@@ -85,6 +87,18 @@ const ContactUsForm = () => {
                     <Typography variant="body1" mb={3} color="text.secondary">
                         {t.formDesc}
                     </Typography>
+                    <Box sx={{ mb: 3, p: 2, borderRadius: 2, backgroundColor: "#f6f8fb" }}>
+                        <Typography variant="subtitle2" fontWeight={700} mb={1}>
+                            {t.directContact}
+                        </Typography>
+                        <Typography variant="body2">{COMPANY_LEGAL_NAME}</Typography>
+                        <Typography variant="body2">
+                            <a href={`mailto:${COMPANY_EMAIL}`}>{COMPANY_EMAIL}</a>
+                        </Typography>
+                        <Typography variant="body2">
+                            <a href={`tel:${COMPANY_PHONE}`}>{COMPANY_PHONE}</a>
+                        </Typography>
+                    </Box>
                     {successMsg ? (
                         <Box
                             sx={{
@@ -106,7 +120,7 @@ const ContactUsForm = () => {
                                 <Form>
                                     <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
                                         <Field name="name">
-                                            {({ field }: { field: any }) => (
+                                            {({ field }: FieldProps) => (
                                                 <TextField
                                                     {...field}
                                                     label={t.firstName}
@@ -119,7 +133,7 @@ const ContactUsForm = () => {
                                             )}
                                         </Field>
                                         <Field name="secondName">
-                                            {({ field }: { field: any }) => (
+                                            {({ field }: FieldProps) => (
                                                 <TextField
                                                     {...field}
                                                     label={t.secondName}
@@ -134,7 +148,7 @@ const ContactUsForm = () => {
                                     </Box>
                                     <Box sx={{ mb: 2 }}>
                                         <Field name="email">
-                                            {({ field }: { field: any }) => (
+                                            {({ field }: FieldProps) => (
                                                 <TextField
                                                     {...field}
                                                     label={t.email}
@@ -150,7 +164,7 @@ const ContactUsForm = () => {
                                     </Box>
                                     <Box sx={{ mb: 2 }}>
                                         <Field name="phone">
-                                            {({ field }: { field: any }) => (
+                                            {({ field }: FieldProps) => (
                                                 <TextField
                                                     {...field}
                                                     label={t.phone}
@@ -166,7 +180,7 @@ const ContactUsForm = () => {
                                     </Box>
                                     <Box sx={{ mb: 2 }}>
                                         <Field name="message">
-                                            {({ field }: { field: any }) => (
+                                            {({ field }: FieldProps) => (
                                                 <TextField
                                                     {...field}
                                                     label={t.message}
@@ -196,7 +210,7 @@ const ContactUsForm = () => {
                 </Typography>
                 <iframe
                     title="Google Map"
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(COMPANY_ADDRESS)}&output=embed`}
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(`${COMPANY_LEGAL_NAME}, ${COMPANY_ADDRESS}`)}&output=embed`}
                     width="100%"
                     height="400"
                     style={{ border: 0 }}

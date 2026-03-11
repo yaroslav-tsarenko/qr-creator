@@ -1,5 +1,6 @@
 import { PageSchema } from '@/components/constructor/page-render/types';
 import { COMPANY_NAME } from '@/resources/constants';
+import { pricingCardsEn } from "@/resources/pricingPlans";
 
 const schema: PageSchema = {
     meta: {
@@ -113,73 +114,7 @@ const schema: PageSchema = {
             type: "grid",
             columns: 4,
             gap: "2rem",
-            cards: [
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Starter Pack",
-                    price: "10",
-                    tokens: 1000,
-                    description: "Perfect for individuals who need occasional QR codes.",
-                    features: [
-                        "5 QR codes included",
-                        "Instant QR access",
-                        "No expiration",
-                        "Best for one-time projects",
-                    ],
-                    buttonText: "Buy Now",
-                    buttonLink: "/pricing", // 👈 Plans & Rates
-                },
-                {
-                    type: "pricing",
-                    variant: "highlight",
-                    title: "Pro Pack",
-                    price: "20",
-                    tokens: 2000,
-                    description: "Great for professionals and small teams.",
-                    features: [
-                        "20 QR codes included",
-                        "Priority QR creation",
-                        "Download & offline access",
-                        "Best value for growing teams",
-                    ],
-                    buttonText: "Get Pro",
-                    buttonLink: "/pricing", // 👈 Plans & Rates
-                },
-                {
-                    type: "pricing",
-                    variant: "premium",
-                    title: "Enterprise Pack",
-                    price: "40",
-                    tokens: 4000,
-                    description: "Best for businesses with regular QR needs.",
-                    features: [
-                        "50 QR codes included",
-                        "Dedicated support",
-                        "Multi-format downloads",
-                        "Custom branding",
-                        "Scalable for large teams",
-                    ],
-                    buttonText: "Go Premium",
-                    buttonLink: "/pricing", // 👈 Plans & Rates
-                },
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Custom Pack",
-                    price: "dynamic",
-                    tokens: 0,
-                    description: "Enter your own token amount and get instant pricing.",
-                    features: [
-                        "Flexible tokens",
-                        "Automatic price calculation",
-                        "No expiration",
-                        "Perfect for custom needs",
-                    ],
-                    buttonText: "Buy Custom",
-                    buttonLink: "/pricing", // 👈 Plans & Rates
-                },
-            ],
+            cards: pricingCardsEn,
         },
         {
             type: "faq",

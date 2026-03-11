@@ -26,6 +26,7 @@ export async function POST(req: Request) {
         const amount = Number.isFinite(rawAmount) ? Number(rawAmount.toFixed(2)) : NaN;
         const currency = String(body.currency || "EUR").toUpperCase();
         const tokens = Number(body.tokens);
+        const packageName = String(body.packageName || "Custom Pack").trim();
         const user = body.user;
 
         const allowedCurrencies = ["EUR", "GBP", "USD", "AUD", "NZD"];
@@ -86,6 +87,7 @@ export async function POST(req: Request) {
                 user_id: String(user.id),
                 tokens: Number(tokens),
                 reference_id: ref,
+                package_name: packageName,
             },
         };
 
@@ -121,8 +123,9 @@ export async function POST(req: Request) {
         // 6️⃣ Success
         // ─────────────────────────────────────
         return NextResponse.json({ redirectUrl, referenceId: ref });
-    } catch (e: any) {
+    } catch (e: unknown) {
         console.error("[TM INIT FATAL]", e);
-        return NextResponse.json({ error: e.message ?? "internal_error" }, { status: 500 });
+        const message = e instanceof Error ? e.message : "internal_error";
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

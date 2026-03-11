@@ -2,10 +2,8 @@ import { PageSchema } from "@/components/constructor/page-render/types";
 import {
     COMPANY_NAME,
     COMPANY_EMAIL,
-    COMPANY_LEGAL_NAME,
-    COMPANY_ADDRESS,
-    COMPANY_NUMBER,
 } from "@/resources/constants";
+import { pricingCardsTr } from "@/resources/pricingPlans";
 
 const pricingSchema: PageSchema = {
     meta: {
@@ -50,73 +48,7 @@ const pricingSchema: PageSchema = {
             type: "grid",
             columns: 4,
             gap: "2rem",
-            cards: [
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Başlangıç Paketi",
-                    price: "10",
-                    tokens: 1000,
-                    description: "Ara sıra kılavuz ihtiyacı olan bireyler için mükemmel.",
-                    features: [
-                        "5 jeton dahil",
-                        "Anında kılavuz erişimi",
-                        "Süresiz kullanım",
-                        "Tek seferlik projeler için ideal"
-                    ],
-                    buttonText: "Satın Al",
-                    buttonLink: "/checkout?plan=starter",
-                },
-                {
-                    type: "pricing",
-                    variant: "highlight",
-                    title: "Pro Paketi",
-                    price: "20",
-                    tokens: 2000,
-                    description: "Profesyoneller ve küçük ekipler için harika.",
-                    features: [
-                        "20 jeton dahil",
-                        "Öncelikli kılavuz oluşturma",
-                        "İndir & çevrimdışı erişim",
-                        "Büyüyen ekipler için en iyi değer"
-                    ],
-                    buttonText: "Pro Ol",
-                    buttonLink: "/checkout?plan=pro",
-                },
-                {
-                    type: "pricing",
-                    variant: "premium",
-                    title: "Kurumsal Paket",
-                    price: "40",
-                    tokens: 4000,
-                    description: "Düzenli dokümantasyon ihtiyacı olan işletmeler için en iyisi.",
-                    features: [
-                        "50 jeton dahil",
-                        "Özel destek",
-                        "Çok dilli kılavuzlar",
-                        "Sektöre özel rehberler",
-                        "Büyük ekipler için ölçeklenebilir"
-                    ],
-                    buttonText: "Premium’a Geç",
-                    buttonLink: "/checkout?plan=enterprise",
-                },
-                {
-                    type: "pricing",
-                    variant: "basic",
-                    title: "Özel Paket",
-                    price: "dynamic",
-                    tokens: 0,
-                    description: "Kendi jeton miktarınızı girin, anında fiyat alın.",
-                    features: [
-                        "Esnek jeton seçimi",
-                        "Otomatik fiyat hesaplama",
-                        "Süresiz kullanım",
-                        "Özel ihtiyaçlar için ideal"
-                    ],
-                    buttonText: "Özel Satın Al",
-                    buttonLink: "/checkout?plan=custom",
-                },
-            ],
+            cards: pricingCardsTr,
         },
         {
             type: "section",
@@ -158,7 +90,7 @@ const pricingSchema: PageSchema = {
                     title: "Kurumsal Avantajlar",
                     description:
                         `İşletmeler ekipler için daha büyük jeton paketleri satın alabilir. Maliyetleri azaltın, özel destek alın ve sektörünüze özel dokümantasyonun keyfini çıkarın.`,
-                    buttonLink: "/contact",
+                    buttonLink: "/contact-us",
                     buttonText: "Satış ile İletişim",
                 },
             ],

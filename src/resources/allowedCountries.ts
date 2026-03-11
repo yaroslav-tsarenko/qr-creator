@@ -3,7 +3,9 @@ const BLOCKED_COUNTRIES = new Set([
     "Belarus",
     "Central African Republic",
     "Cuba",
+    "Dafur(Sudan)",
     "Dafur (Sudan)",
+    "DEm. Rep. of the Congo",
     "Dem. Rep. of the Congo",
     "Haiti",
     "Iran",
@@ -19,6 +21,14 @@ const BLOCKED_COUNTRIES = new Set([
     "Yemen",
     "Zimbabwe",
 ]);
+
+function normalizeCountryName(country: string) {
+    return country.toLowerCase().replace(/[^a-z]/g, "");
+}
+
+const BLOCKED_COUNTRY_KEYS = new Set(
+    Array.from(BLOCKED_COUNTRIES, (country) => normalizeCountryName(country))
+);
 
 const ALL_COUNTRIES = [
     "Albania",
@@ -202,7 +212,9 @@ const ALL_COUNTRIES = [
     "Zambia",
 ];
 
-export const allowedCountries = ALL_COUNTRIES.filter((country) => !BLOCKED_COUNTRIES.has(country));
+export const allowedCountries = ALL_COUNTRIES.filter(
+    (country) => !BLOCKED_COUNTRY_KEYS.has(normalizeCountryName(country))
+);
 
 export const allowedCountryOptions = allowedCountries.map((country) => ({
     value: country,
@@ -210,5 +222,5 @@ export const allowedCountryOptions = allowedCountries.map((country) => ({
 }));
 
 export function isAllowedCountry(country: string) {
-    return allowedCountries.includes(country);
+    return !BLOCKED_COUNTRY_KEYS.has(normalizeCountryName(country));
 }

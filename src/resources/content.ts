@@ -1,5 +1,5 @@
 import { media } from "@/resources/media";
-import {COMPANY_ADDRESS, COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_NUMBER} from "@/resources/constants";
+import {COMPANY_ADDRESS, COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_NUMBER, COMPANY_PHONE} from "@/resources/constants";
 import { FaInstagram, FaLinkedin } from "react-icons/fa";
 
 export const baseURL =
@@ -43,13 +43,13 @@ export const footerContent = {
                 { label: "Terms & Conditions", href: "/terms-and-conditions" },
                 { label: "Cookie Policy", href: "/cookie-policy" },
                 { label: "Refund Policy", href: "/refund-policy" },
-                { label: "Privacy Policy", href: "/cookie-policy" },
+                { label: "Privacy Policy", href: "/privacy-policy" },
             ],
         },
     ],
     contact: {
         email: COMPANY_EMAIL,
-        phone: undefined,
+        phone: COMPANY_PHONE,
     },
     legal: {
         companyName: COMPANY_LEGAL_NAME,
@@ -62,7 +62,7 @@ export const footerContent = {
     socials: [
         {
             label: "Instagram",
-            href: "https://www.instagram.com/avemexqr.uk",
+            href: "https://www.instagram.com/avemexqr.uk/",
             icon: FaInstagram,
             brandColor: "#E1306C",
         },

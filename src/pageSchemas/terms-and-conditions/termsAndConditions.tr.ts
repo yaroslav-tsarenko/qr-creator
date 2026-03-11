@@ -22,7 +22,7 @@ const termsSchema: PageSchema = {
             "ödeme",
             "para birimi"
         ],
-        canonical: "/terms",
+        canonical: "/terms-and-conditions",
         ogImage: {
             title: `${COMPANY_NAME} – Şartlar`,
             description: "Şeffaf koşullar. Kılavuzlar basit.",
