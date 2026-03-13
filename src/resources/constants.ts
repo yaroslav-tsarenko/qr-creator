@@ -1,6 +1,6 @@
 export const COMPANY_ADDRESS = process.env.NEXT_PUBLIC_COMPANY_ADDRESS;
 export const COMPANY_LEGAL_NAME = process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME;
-export const COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME;
+export const COMPANY_NAME = "Avemex";
 export const COMPANY_NUMBER = process.env.NEXT_PUBLIC_COMPANY_NUMBER;
 export const COMPANY_EMAIL = process.env.NEXT_PUBLIC_COMPANY_EMAIL;
 export const COMPANY_PHONE = "+44 7463 591551";
