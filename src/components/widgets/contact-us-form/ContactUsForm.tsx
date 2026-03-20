@@ -8,7 +8,7 @@ import { validationSchema, initialValues, sendContactRequest } from "./schema";
 import { useAlert } from "@/context/AlertContext";
 import { useI18n } from "@/context/i18nContext";
 import ButtonUI from "@/components/ui/button/ButtonUI";
-import { COMPANY_ADDRESS, COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_PHONE } from "@/resources/constants";
+import { COMPANY_EMAIL, COMPANY_LEGAL_NAME, COMPANY_PHONE } from "@/resources/constants";
 
 const translations = {
     en: {
@@ -25,7 +25,6 @@ const translations = {
         successAlertMsg: "Your request has been sent!",
         errorAlertTitle: "Error",
         errorAlertMsg: "Failed to send. Please try again.",
-        mapTitle: "Find Us Here",
         directContact: "Direct contact",
     },
     tr: {
@@ -42,7 +41,6 @@ const translations = {
         successAlertMsg: "Talebiniz gönderildi!",
         errorAlertTitle: "Hata",
         errorAlertMsg: "Gönderilemedi. Lütfen tekrar deneyin.",
-        mapTitle: "Bizi Burada Bulun",
         directContact: "Dogrudan iletisim",
     },
 };
@@ -202,22 +200,6 @@ const ContactUsForm = () => {
                     )}
                 </CardContent>
             </Card>
-
-            {/* Google Map */}
-            <Box sx={{ width: "100%", maxWidth: "900px", borderRadius: 3, overflow: "hidden", boxShadow: 3 }}>
-                <Typography variant="h6" textAlign="center" m={2} fontWeight={600} color="primary">
-                    {t.mapTitle}
-                </Typography>
-                <iframe
-                    title="Google Map"
-                    src={`https://www.google.com/maps?q=${encodeURIComponent(`${COMPANY_LEGAL_NAME}, ${COMPANY_ADDRESS}`)}&output=embed`}
-                    width="100%"
-                    height="400"
-                    style={{ border: 0 }}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-            </Box>
         </Box>
     );
 };
