@@ -8,8 +8,12 @@ import { useUser } from "@/context/UserContext";
 import Input from "@mui/joy/Input";
 import Checkbox from "@mui/joy/Checkbox";
 import Link from "next/link";
+import Image from "next/image";
 import { useCurrency } from "@/context/CurrencyContext";
 import { MdCheckCircle } from "react-icons/md";
+import pciDssLogo from "@/assets/icons/pci-dss-compliant-logo-vector.svg";
+import visaLogo from "@/assets/icons/visa-logo.svg";
+import mastercardLogo from "@/assets/icons/mastercard-logo.svg";
 
 interface PricingCardProps {
     variant?: "basic" | "highlight" | "premium";
@@ -30,7 +34,7 @@ const currencyConfig = {
 
 const MIN_PURCHASE_AMOUNT = 10;
 const MAX_CUSTOM_AMOUNT = 9999;
-const TOKENS_PER_1_CURRENCY_UNIT = 100;
+const TOKENS_PER_1_GBP = 100;
 
 const labelText: Record<string, string> = {
     basic: "Basic",
@@ -49,14 +53,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
                                                  }) => {
     const { showAlert } = useAlert();
     const user = useUser();
-    const { currency } = useCurrency();
+    const { currency, convert, rates } = useCurrency();
 
     const { symbol } = currencyConfig[currency];
 
-    // Store input as string to avoid input glitches (e.g. 13 turning into 1012 while typing)
+    // Store input as string to avoid input glitches (e.g. 13 turning into 103 while typing)
     const [customAmountInput, setCustomAmountInput] = useState<string>(String(MIN_PURCHASE_AMOUNT));
 
-    // Derived numeric value (clamped)
+    // Derived numeric value (clamped) — this is in the SELECTED currency
     const customAmount = useMemo(() => {
         const normalized = customAmountInput.replace(/,/g, ".").trim();
         const n = Number(normalized);
@@ -67,8 +71,21 @@ const PricingCard: React.FC<PricingCardProps> = ({
     // NEW — чекбокс
     const [acceptedTerms, setAcceptedTerms] = useState(false);
 
-    // Use integer tokens (no floating drift).
-    const calcTokens = (amount: number) => Math.floor(amount * TOKENS_PER_1_CURRENCY_UNIT);
+    // Convert custom amount in selected currency back to GBP base, then compute tokens
+    const customAmountInGBP = useMemo(() => {
+        const rate = rates[currency];
+        if (!rate || rate === 0) return customAmount;
+        return customAmount / rate;
+    }, [customAmount, rates, currency]);
+
+    // Tokens for custom pack: based on GBP equivalent
+    const calcCustomTokens = (amountGBP: number) => Math.floor(amountGBP * TOKENS_PER_1_GBP);
+
+    // Convert fixed pack GBP price to display currency
+    const displayPrice = useMemo(() => {
+        if (price === "dynamic") return 0;
+        return convert(Number(price));
+    }, [price, convert]);
 
     const handleBuy = async () => {
         if (!acceptedTerms) return;
@@ -90,14 +107,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return;
         }
 
-        // Amount in selected UI currency (matches what /api/transfermit/initiate expects)
+        // Amount in selected UI currency — this is what we send to Transfermit
         const payAmount = price === "dynamic"
             ? Number(customAmount.toFixed(2))
-            : Number(Number(price).toFixed(2));
+            : displayPrice;
 
-        // For dynamic pack tokens come from entered amount.
+        // Tokens: for fixed packs use pre-set tokens; for custom use GBP equivalent
         const tokensToBuy = price === "dynamic"
-            ? calcTokens(payAmount)
+            ? calcCustomTokens(customAmountInGBP)
             : tokens;
 
         if (!Number.isFinite(payAmount) || payAmount < MIN_PURCHASE_AMOUNT) {
@@ -172,7 +189,6 @@ const PricingCard: React.FC<PricingCardProps> = ({
                         }}
                         slotProps={{
                             input: {
-                                // for mobile keyboards
                                 inputMode: "decimal",
                             },
                         }}
@@ -183,15 +199,15 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     />
 
                     <p className={styles.price}>
-                        {symbol}{Number(customAmount.toFixed(2)).toFixed(2)}{" "}
+                        {symbol}{customAmount.toFixed(2)}{" "}
                         <span className={styles.tokens}>
-                            ≈ {calcTokens(Number(customAmount.toFixed(2)))} tokens
+                            ≈ {calcCustomTokens(customAmountInGBP)} tokens
                         </span>
                     </p>
                 </>
             ) : (
                 <p className={styles.price}>
-                    {symbol}{Number(price).toFixed(2)}
+                    {symbol}{displayPrice.toFixed(2)}
                     <span className={styles.tokens}>/{tokens} tokens</span>
                 </p>
             )}
@@ -207,7 +223,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
                 ))}
             </ul>
 
-            {/* NEW — Terms Checkbox */}
+            {/* Payment trust badges */}
+
+
+            {/* Terms Checkbox */}
             <Checkbox
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}

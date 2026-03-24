@@ -11,6 +11,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Invalid token amount" }, { status: 400 });
         }
 
+        if (amount < 1000) {
+            return NextResponse.json({ message: "Minimum purchase is 1000 tokens (£10)" }, { status: 400 });
+        }
+
         const user = await userController.buyTokens(payload.sub, amount);
         return NextResponse.json({ user });
     } catch (err: any) {

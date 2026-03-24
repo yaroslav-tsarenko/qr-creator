@@ -72,7 +72,37 @@ export const authService = {
         await sendEmail(
             user.email,
             `Welcome to ${COMPANY_NAME} 🎉`,
-            `Hi ${user.name}, thanks for registering at ${COMPANY_NAME}.`
+            `Hi ${user.name}, thanks for registering at ${COMPANY_NAME}. Your account is ready to use!`,
+            `
+            <div style="font-family: Arial, sans-serif; background:#f4faff; padding:20px; color:#333;">
+              <div style="max-width:600px; margin:auto; background:#fff; border-radius:8px; padding:30px; box-shadow:0 4px 10px rgba(0,0,0,0.05);">
+                <h2 style="color:#007BFF; text-align:center;">Welcome to ${COMPANY_NAME}! 🎉</h2>
+                <p style="font-size:16px; line-height:1.6;">Hi <strong>${user.firstName || user.name}</strong>,</p>
+                <p style="font-size:16px; line-height:1.6;">
+                    Thank you for registering at <strong>${COMPANY_NAME}</strong>. Your account has been created successfully.
+                </p>
+                <p style="font-size:16px; line-height:1.6;">Here's what you can do next:</p>
+                <ul style="font-size:15px; line-height:1.8; color:#555;">
+                    <li>Purchase tokens to start generating QR codes</li>
+                    <li>Customize your QR codes with colors, logos, and styles</li>
+                    <li>Download in PNG, SVG, or PDF formats</li>
+                </ul>
+                <div style="text-align:center; margin:30px 0;">
+                  <a href="${process.env.APP_URL || process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://www.avemex.co.uk'}/dashboard"
+                     style="background:#007BFF; color:#fff; text-decoration:none; padding:14px 28px; border-radius:6px; font-weight:bold; font-size:16px;">
+                     Go to Dashboard
+                  </a>
+                </div>
+                <hr style="margin:20px 0; border:none; border-top:1px solid #eee;" />
+                <p style="font-size:13px; color:#999; text-align:center;">
+                    If you did not create this account, please contact us at ${process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'info@avemex.co.uk'}.
+                </p>
+                <p style="font-size:14px; color:#777; text-align:center;">
+                  © ${new Date().getFullYear()} ${COMPANY_NAME} – All rights reserved.
+                </p>
+              </div>
+            </div>
+            `
         );
 
         return { user, ...result };

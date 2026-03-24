@@ -1,5 +1,6 @@
 import { PageSchema } from "@/components/constructor/page-render/types";
 import { COMPANY_NAME } from "@/resources/constants";
+import { pricingCardsTr } from "@/resources/pricingPlans";
 
 const schema: PageSchema = {
     meta: {
@@ -206,6 +207,12 @@ const schema: PageSchema = {
                     "Büyüyen topluluk",
                 ],
             },
+        },
+        {
+            type: "grid",
+            columns: 4,
+            gap: "2rem",
+            cards: pricingCardsTr,
         },
         {
             type: "faq",

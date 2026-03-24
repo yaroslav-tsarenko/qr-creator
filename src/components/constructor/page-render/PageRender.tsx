@@ -146,7 +146,7 @@ function RenderGrid(b: GridBlock) {
         (b.items && b.items.length > 0)
             ? b.items
             : (b.cards?.map((c, idx) => {
-                if ((c as any).type === "pricing") {
+                if ("type" in c && c.type === "pricing") {
                     return {
                         key: c.title ?? String(idx),
                         block: c as PricingBlock,
@@ -156,7 +156,7 @@ function RenderGrid(b: GridBlock) {
                     key: c.title ?? String(idx),
                     block: {
                         type: "card",
-                        image: c.image,
+                        image: (c as CardBlock).image ?? "",
                         title: c.title,
                         description: c.description,
                         buttonLink: c.buttonLink,

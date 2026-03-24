@@ -1,13 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./PricingCard.module.scss";
 import ButtonUI from "@/components/ui/button/ButtonUI";
 import { useAlert } from "@/context/AlertContext";
 import { useUser } from "@/context/UserContext";
 import Input from "@mui/joy/Input";
+import Image from "next/image";
 import { useCurrency } from "@/context/CurrencyContext";
 import { MdCheckCircle } from "react-icons/md";
+import pciDssLogo from "@/assets/icons/pci-dss-compliant-logo-vector.svg";
+import visaLogo from "@/assets/icons/visa-logo.svg";
+import mastercardLogo from "@/assets/icons/mastercard-logo.svg";
 
 interface PricingCardProps {
     variant?: "basic" | "highlight" | "premium";
@@ -28,6 +32,7 @@ const currencyConfig = {
 
 const MIN_CUSTOM_AMOUNT = 10;
 const MAX_CUSTOM_AMOUNT = 9999;
+const TOKENS_PER_1_GBP = 100;
 
 const labelText: Record<string, string> = {
     basic: "Basic",
@@ -48,18 +53,29 @@ const PricingCard: React.FC<PricingCardProps> = ({
     const user = useUser();
 
     // currency + real exchange rates
-    const { currency, rates, loading } = useCurrency();
+    const { currency, rates, loading, convert } = useCurrency();
     const { symbol } = currencyConfig[currency];
 
-    const [customAmount, setCustomAmount] = useState(MIN_CUSTOM_AMOUNT);
+    // Store input as string to avoid input glitches (e.g. 13 turning into 103 while typing)
+    const [customAmountInput, setCustomAmountInput] = useState<string>(String(MIN_CUSTOM_AMOUNT));
 
+    // Derived numeric value (clamped) — this is in the SELECTED currency
+    const customAmount = useMemo(() => {
+        const normalized = customAmountInput.replace(/,/g, ".").trim();
+        const n = Number(normalized);
+        if (!Number.isFinite(n)) return MIN_CUSTOM_AMOUNT;
+        return Math.max(Math.min(n, MAX_CUSTOM_AMOUNT), MIN_CUSTOM_AMOUNT);
+    }, [customAmountInput]);
 
-    const convertPrice = (base: number) => {
-        if (loading) return base;
-        return base * rates[currency];
-    };
-    const convertedPrice = convertPrice(Number(price));
-    const calcTokens = (amount: number) => Math.floor(amount * 100);
+    // Convert custom amount back to GBP base for token calculation
+    const customAmountInGBP = useMemo(() => {
+        const rate = rates[currency];
+        if (!rate || rate === 0) return customAmount;
+        return customAmount / rate;
+    }, [customAmount, rates, currency]);
+
+    const convertedPrice = convert(Number(price));
+    const calcTokens = (amountGBP: number) => Math.floor(amountGBP * TOKENS_PER_1_GBP);
 
     const handleBuy = async () => {
         if (!user) {
@@ -76,16 +92,10 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return;
         }
 
-        // 🔑 BASE: ціна завжди рахується від токенів
-        const baseAmountGBP =
-            price === "dynamic"
-                ? customAmount
-                : tokens / 100; // 100 tokens = £1
-
-        // 🔑 PAY AMOUNT = base * rate валюти
-        const payAmount = Number(
-            (baseAmountGBP * rates[currency]).toFixed(2)
-        );
+        // PAY AMOUNT in selected currency
+        const payAmount = price === "dynamic"
+            ? Number(customAmount.toFixed(2))
+            : convertedPrice;
 
         if (!Number.isFinite(payAmount) || payAmount < MIN_CUSTOM_AMOUNT) {
             showAlert(
@@ -96,23 +106,20 @@ const PricingCard: React.FC<PricingCardProps> = ({
             return;
         }
 
-        const tokensToBuy =
-            price === "dynamic"
-                ? Math.floor(customAmount * 100)
-                : tokens;
+        const tokensToBuy = price === "dynamic"
+            ? calcTokens(customAmountInGBP)
+            : tokens;
 
         const payload = {
-            amount: payAmount,      // ✅ СУМА В ОБРАНІЙ ВАЛЮТІ
-            currency,               // ✅ GBP | USD | EUR
+            amount: payAmount,
+            currency,
             tokens: tokensToBuy,
+            packageName: price === "dynamic" ? "Custom Pack" : title,
             user: {
                 id: user._id,
                 email: user.email,
-                // Avoid fields not present in IUser
             },
         };
-
-        console.log("[PricingCard] PAYLOAD:", payload);
 
         try {
             const res = await fetch("/api/transfermit/initiate", {
@@ -156,21 +163,23 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
                 <>
                     <Input
-                        type="number"
-                        value={customAmount}
+                        type="text"
+                        inputMode="decimal"
+                        value={customAmountInput}
                         onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value.toString().length > 7) return;
-
-                            setCustomAmount(
-                                Math.max(Math.min(value, MAX_CUSTOM_AMOUNT), MIN_CUSTOM_AMOUNT)
-                            );
+                            const next = e.target.value;
+                            // allow digits, dot and comma, and empty (while editing)
+                            if (!/^[0-9]*[.,]?[0-9]*$/.test(next)) return;
+                            if (next.length > 7) return;
+                            setCustomAmountInput(next);
+                        }}
+                        onBlur={() => {
+                            // Snap to a sane formatted number on blur
+                            setCustomAmountInput(customAmount.toFixed(2));
                         }}
                         slotProps={{
                             input: {
-                                min: MIN_CUSTOM_AMOUNT,
-                                max: MAX_CUSTOM_AMOUNT,
-                                step: 0.01,
+                                inputMode: "decimal",
                             },
                         }}
                         sx={{ mb: 2, width: "100%" }}
@@ -181,9 +190,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
 
                     <p className={styles.price}>
                         {symbol}
-                        {convertPrice(customAmount).toFixed(2)}{" "}
+                        {customAmount.toFixed(2)}{" "}
                         <span className={styles.tokens}>
-                            ≈ {calcTokens(customAmount)} tokens
+                            ≈ {calcTokens(customAmountInGBP)} tokens
                         </span>
                     </p>
                 </>
@@ -199,6 +208,13 @@ const PricingCard: React.FC<PricingCardProps> = ({
                     </li>
                 ))}
             </ul>
+
+            {/* Payment trust badges */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.8rem", margin: "0.8rem 0 1rem", opacity: 0.7 }}>
+                <Image src={visaLogo} alt="Visa" width={40} height={26} />
+                <Image src={mastercardLogo} alt="Mastercard" width={40} height={26} />
+                <Image src={pciDssLogo} alt="PCI DSS Compliant" width={50} height={26} />
+            </div>
 
             <ButtonUI
                 type="button"

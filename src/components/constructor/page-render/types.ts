@@ -115,7 +115,7 @@ export type GridBlock = {
     gap?: string;
     style?: CSSProperties;
     items?: GridItem[];
-    cards?: LegacyCard[];
+    cards?: (LegacyCard | PricingBlock)[];
 };
 
 export type PricingBlock = {

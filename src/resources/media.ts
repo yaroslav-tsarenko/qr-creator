@@ -13,9 +13,11 @@ import mastercard from "@/assets/icons/mastercard-logo.svg";
 import apple_pay from "@/assets/icons/Apple_Pay_logo.svg";
 import google_pay from "@/assets/icons/Google_Pay_Logo.svg";
 import american_express from "@/assets/icons/American_Express_logo.svg";
+import pci_dss from "@/assets/icons/pci-dss-compliant-logo-vector.svg";
 
 
 export const media = {
+    pci_dss: pci_dss,
     visa: visa,
     mastercard: mastercard,
     apple_pay: apple_pay,

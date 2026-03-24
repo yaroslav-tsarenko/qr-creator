@@ -84,5 +84,10 @@ export const footerContent = {
             src: media.mastercard?.src,
             alt: "Mastercard",
         },
+        {
+            label: "PCI DSS Compliant",
+            src: media.pci_dss?.src,
+            alt: "PCI DSS Compliant",
+        },
     ],
 };
