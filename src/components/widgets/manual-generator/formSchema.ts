@@ -275,7 +275,7 @@ export const formSchema = {
     ],
 };
 
-export const buildPrompt = (values: Record<string, any>, lang: "en" | "tr" = "en"): string => {
+export const buildPrompt = (values: Record<string, any>, lang: string = "en"): string => {
     const getStr = (val: any) => (typeof val === "object" && val !== null && lang in val ? val[lang] : val);
 
     const sections: string[] = [];

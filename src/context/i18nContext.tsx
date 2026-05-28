@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-export type LangCode = "en" | "tr";
+export type LangCode = "en" | "tr" | "el" | "da" | "hu";
 
 type I18nContextType = {
     lang: LangCode;
@@ -16,17 +16,15 @@ export const I18nProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 
     useEffect(() => {
         try {
+            const SUPPORTED: LangCode[] = ["en", "tr", "el", "da", "hu"];
             const saved = localStorage.getItem("lang") as LangCode | null;
-            if (saved === "tr" || saved === "en") {
+            if (saved && SUPPORTED.includes(saved)) {
                 setLangState(saved);
                 return;
             }
             const browser = (navigator.language || "").toLowerCase();
-            if (browser.startsWith("en")) {
-                setLangState("en");
-            } else {
-                setLangState("en");
-            }
+            const detected = SUPPORTED.find((c) => browser.startsWith(c));
+            setLangState(detected ?? "en");
         } catch {
             setLangState("en");
         }

@@ -27,7 +27,28 @@ const translations = {
         email: "E-posta",
         password: "Şifre",
         submit: "Giriş Yap",
-    }
+    },
+    el: {
+        title: "Σύνδεση",
+        description: "Καλώς ήρθατε ξανά! Εισάγετε τα στοιχεία σας.",
+        email: "Email",
+        password: "Κωδικός",
+        submit: "Σύνδεση",
+    },
+    da: {
+        title: "Log ind",
+        description: "Velkommen tilbage! Indtast dine oplysninger.",
+        email: "E-mail",
+        password: "Adgangskode",
+        submit: "Log ind",
+    },
+    hu: {
+        title: "Bejelentkezés",
+        description: "Üdvözöljük újra! Kérjük, adja meg adatait.",
+        email: "E-mail",
+        password: "Jelszó",
+        submit: "Bejelentkezés",
+    },
 };
 
 export default function SignInPage() {

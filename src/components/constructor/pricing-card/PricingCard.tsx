@@ -30,6 +30,8 @@ const currencyConfig = {
     GBP: { symbol: "£" },
     USD: { symbol: "$" },
     EUR: { symbol: "€" },
+    DKK: { symbol: "kr" },
+    HUF: { symbol: "Ft" },
 } as const;
 
 const MIN_PURCHASE_AMOUNT = 10;

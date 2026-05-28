@@ -25,7 +25,22 @@ const translations = {
         showAdvanced: "Gelişmiş Seçenekleri Göster",
         hideAdvanced: "Gelişmiş Seçenekleri Gizle",
         getManual: "Kılavuz Al",
-    }
+    },
+    el: {
+        showAdvanced: "Εμφάνιση Προχωρημένων Επιλογών",
+        hideAdvanced: "Απόκρυψη Προχωρημένων Επιλογών",
+        getManual: "Λήψη Εγχειριδίου",
+    },
+    da: {
+        showAdvanced: "Vis Avancerede Indstillinger",
+        hideAdvanced: "Skjul Avancerede Indstillinger",
+        getManual: "Hent Manual",
+    },
+    hu: {
+        showAdvanced: "Haladó Beállítások Megjelenítése",
+        hideAdvanced: "Haladó Beállítások Elrejtése",
+        getManual: "Kézikönyv Letöltése",
+    },
 };
 
 const ManualGenerator = () => {

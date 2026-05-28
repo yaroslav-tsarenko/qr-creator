@@ -25,7 +25,22 @@ const translations = {
         generateQr: "QR Kod Oluştur",
         myOrders: "Siparişlerim",
         myTransactions: "İşlemlerim",
-    }
+    },
+    el: {
+        generateQr: "Δημιουργία QR Code",
+        myOrders: "Οι Παραγγελίες μου",
+        myTransactions: "Οι Συναλλαγές μου",
+    },
+    da: {
+        generateQr: "Generer QR-kode",
+        myOrders: "Mine Ordrer",
+        myTransactions: "Mine Transaktioner",
+    },
+    hu: {
+        generateQr: "QR-kód Generálás",
+        myOrders: "Rendeléseim",
+        myTransactions: "Tranzakcióim",
+    },
 };
 
 const Dashboard = () => {

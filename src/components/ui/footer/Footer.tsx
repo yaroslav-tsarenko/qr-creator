@@ -4,14 +4,14 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Footer.module.scss";
-import { footerContent } from "@/resources/content";
-import { useI18n } from "@/context/i18nContext";
+import { getFooterContent } from "@/resources/content";
+import { useI18n, LangCode } from "@/context/i18nContext";
 
 const Footer: React.FC = () => {
-    const { logo, columns, contact, socials, legal, payments } = footerContent;
     const { lang } = useI18n();
+    const { logo, columns, contact, socials, legal, payments } = getFooterContent(lang);
 
-    const translations = {
+    const translations: Record<LangCode, { company: string; address: string; email: string; phone: string; rights: string; followUs: string; payments: string }> = {
         en: {
             company: "Company",
             address: "Address",
@@ -29,6 +29,33 @@ const Footer: React.FC = () => {
             rights: "Tüm hakları saklıdır.",
             followUs: "Bizi takip edin",
             payments: "Ödemeler",
+        },
+        el: {
+            company: "Εταιρεία",
+            address: "Διεύθυνση",
+            email: "Email",
+            phone: "Τηλέφωνο",
+            rights: "Με επιφύλαξη παντός δικαιώματος.",
+            followUs: "Ακολουθήστε μας",
+            payments: "Πληρωμές",
+        },
+        da: {
+            company: "Virksomhed",
+            address: "Adresse",
+            email: "E-mail",
+            phone: "Telefon",
+            rights: "Alle rettigheder forbeholdes.",
+            followUs: "Følg os",
+            payments: "Betalinger",
+        },
+        hu: {
+            company: "Cég",
+            address: "Cím",
+            email: "E-mail",
+            phone: "Telefon",
+            rights: "Minden jog fenntartva.",
+            followUs: "Kövessen minket",
+            payments: "Fizetés",
         },
     };
 

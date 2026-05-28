@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode, useCallback } from "react";
 
-type Currency = "GBP" | "USD" | "EUR";
+type Currency = "GBP" | "USD" | "EUR" | "DKK" | "HUF";
 
 type Rates = Record<Currency, number>;
 
@@ -22,7 +22,7 @@ export const useCurrency = () => {
 };
 
 // Fallback rates (approximate) in case the API is unavailable
-const FALLBACK_RATES: Rates = { GBP: 1, USD: 1.27, EUR: 1.17 };
+const FALLBACK_RATES: Rates = { GBP: 1, USD: 1.27, EUR: 1.17, DKK: 8.73, HUF: 480.0 };
 
 const CACHE_KEY = "fx_rates_cache";
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour
@@ -62,7 +62,7 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
         setLoading(true);
 
         // Fetch GBP→USD & GBP→EUR rates from frankfurter.app (free, no key required)
-        fetch("https://api.frankfurter.app/latest?from=GBP&to=USD,EUR")
+        fetch("https://api.frankfurter.app/latest?from=GBP&to=USD,EUR,DKK,HUF")
             .then((r) => r.json())
             .then((data) => {
                 if (cancelled) return;
@@ -71,6 +71,8 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
                         GBP: 1,
                         USD: Number(data.rates.USD) || FALLBACK_RATES.USD,
                         EUR: Number(data.rates.EUR) || FALLBACK_RATES.EUR,
+                        DKK: Number(data.rates.DKK) || FALLBACK_RATES.DKK,
+                        HUF: Number(data.rates.HUF) || FALLBACK_RATES.HUF,
                     };
                     setRates(newRates);
                     setCachedRates(newRates);

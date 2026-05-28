@@ -13,7 +13,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import styles from "./AllOrders.module.scss";
 
-const translations = {
+const translations: Record<string, { title: string; empty: string; charge: (amount: number) => string }> = {
     en: {
         title: "Your Orders",
         empty: "No orders yet.",
@@ -24,6 +24,21 @@ const translations = {
         empty: "Henüz sipariş yok.",
         charge: (amount: number) => `-${amount} jeton`,
     },
+    el: {
+        title: "Οι Παραγγελίες σας",
+        empty: "Δεν υπάρχουν παραγγελίες.",
+        charge: (amount: number) => `-${amount} tokens`,
+    },
+    da: {
+        title: "Dine Ordrer",
+        empty: "Ingen ordrer endnu.",
+        charge: (amount: number) => `-${amount} tokens`,
+    },
+    hu: {
+        title: "Rendelései",
+        empty: "Még nincsenek rendelések.",
+        charge: (amount: number) => `-${amount} token`,
+    },
 };
 
 const TOKEN_AMOUNT = 30;
@@ -33,13 +48,15 @@ const OrdersSection: React.FC = () => {
     const { lang } = useI18n();
     const t = translations[lang] || translations.en;
 
+    const localeMap: Record<string, string> = { en: "en-US", tr: "tr-TR", el: "el-GR", da: "da-DK", hu: "hu-HU" };
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+        const locale = localeMap[lang] || "en-US";
+        return date.toLocaleDateString(locale, {
             day: "numeric",
             month: "short",
             year: "numeric",
-        }) + " " + date.toLocaleTimeString(lang === "tr" ? "tr-TR" : "en-US", {
+        }) + " " + date.toLocaleTimeString(locale, {
             hour: "2-digit",
             minute: "2-digit",
         });
